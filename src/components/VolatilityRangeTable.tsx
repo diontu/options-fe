@@ -234,7 +234,6 @@ function RangeCard({
   upper,
   periodIvPct,
   premium,
-  delta,
   highlight = false,
 }: {
   label: string;

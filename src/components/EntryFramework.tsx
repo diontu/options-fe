@@ -1,11 +1,5 @@
 import { cn } from "@/lib/utils";
 import {
-  TrendingUp,
-  TrendingDown,
-  BarChart2,
-  Zap,
-  Volume2,
-  Newspaper,
   CheckCircle2,
   XCircle,
   AlertCircle,
