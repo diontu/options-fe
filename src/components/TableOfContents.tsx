@@ -2,9 +2,9 @@ import { cn } from "@/lib/utils";
 
 const SECTIONS = [
   { id: "range-section", label: "Range by Time Period" },
-  { id: "theta-section", label: "Theta" },
   { id: "delta-section", label: "Delta" },
   { id: "iv-section", label: "Implied Volatility" },
+  { id: "theta-section", label: "Theta" },
 ];
 
 function scrollTo(id: string) {

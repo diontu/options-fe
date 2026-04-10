@@ -11,6 +11,8 @@ interface Props {
   indexPrice: number;
   strikePrice: number;
   impliedVolatility: number; // annual IV as percentage e.g. 18 = 18%
+  premium?: number;
+  delta?: number;
 }
 
 const TRADING_DAYS_PER_YEAR = 252;
@@ -43,7 +45,7 @@ const PRESETS = [
   { label: "1 Year", days: 252 },
 ];
 
-export function VolatilityRangeTable({ indexPrice, strikePrice, impliedVolatility }: Props) {
+export function VolatilityRangeTable({ indexPrice, strikePrice, impliedVolatility, premium, delta }: Props) {
   const [showCustom, setShowCustom] = useState(false);
   const [customDaysRaw, setCustomDaysRaw] = useState("30");
   const [sigma, setSigma] = useState(1);
@@ -89,6 +91,38 @@ export function VolatilityRangeTable({ indexPrice, strikePrice, impliedVolatilit
         </span>
       </div>
 
+      {/* Legend */}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-blue-500 border border-white shadow-sm shrink-0" />
+          <span>Index price</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 bg-emerald-500 border border-white shadow-sm shrink-0" style={{ transform: "rotate(45deg)" }} />
+          <span>Strike (ITM)</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 bg-rose-500 border border-white shadow-sm shrink-0" style={{ transform: "rotate(45deg)" }} />
+          <span>Strike (OTM)</span>
+        </div>
+        {premium != null && (
+          <>
+            <div className="flex items-center gap-1.5">
+              <div className="w-0 h-0 shrink-0" style={{ borderLeft: "5px solid transparent", borderRight: "5px solid transparent", borderBottom: "9px solid #f59e0b" }} />
+              <span>Call breakeven</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-0 h-0 shrink-0" style={{ borderLeft: "5px solid transparent", borderRight: "5px solid transparent", borderTop: "9px solid #8b5cf6" }} />
+              <span>Put breakeven</span>
+            </div>
+          </>
+        )}
+        <div className="flex items-center gap-1.5">
+          <div className="w-5 h-2.5 rounded-full bg-violet-200 dark:bg-violet-800/60 shrink-0" />
+          <span>Expected range</span>
+        </div>
+      </div>
+
       {/* Preset grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {PRESETS.map(({ label, days }) => {
@@ -101,6 +135,8 @@ export function VolatilityRangeTable({ indexPrice, strikePrice, impliedVolatilit
               sigma={sigma}
               indexPrice={indexPrice}
               strikePrice={strikePrice}
+              premium={premium}
+              delta={delta}
               {...r}
             />
           );
@@ -153,6 +189,8 @@ export function VolatilityRangeTable({ indexPrice, strikePrice, impliedVolatilit
                     sigma={sigma}
                     indexPrice={indexPrice}
                     strikePrice={strikePrice}
+                    premium={premium}
+                    delta={delta}
                     highlight
                     {...r}
                   />
@@ -195,6 +233,8 @@ function RangeCard({
   lower,
   upper,
   periodIvPct,
+  premium,
+  delta,
   highlight = false,
 }: {
   label: string;
@@ -206,18 +246,44 @@ function RangeCard({
   lower: number;
   upper: number;
   periodIvPct: number;
+  premium?: number;
+  delta?: number;
   highlight?: boolean;
 }) {
   const movePct = (move / indexPrice) * 100;
   const itm = strikePrice >= lower && strikePrice <= upper;
+  const callBreakeven = premium != null ? strikePrice + premium : undefined;
+  const putBreakeven = premium != null ? strikePrice - premium : undefined;
+
+  const callInRange = callBreakeven != null && callBreakeven >= lower && callBreakeven <= upper;
+  const putInRange = putBreakeven != null && putBreakeven >= lower && putBreakeven <= upper;
+  const hasPremium = premium != null;
+
+  const borderColor = hasPremium
+    ? callInRange && putInRange
+      ? "border-emerald-400 dark:border-emerald-600"
+      : callInRange || putInRange
+      ? "border-amber-400 dark:border-amber-500"
+      : "border-rose-400 dark:border-rose-600"
+    : itm
+    ? "border-emerald-400 dark:border-emerald-600"
+    : "border-rose-400 dark:border-rose-600";
+
+  const tooltipText = hasPremium
+    ? callInRange && putInRange
+      ? `Green — Both call and put breakevens are within the ±${sigma}σ range.`
+      : callInRange || putInRange
+      ? `Yellow — Only one breakeven (${callInRange ? "call" : "put"}) is within the ±${sigma}σ range.`
+      : `Red — Neither breakeven is within the ±${sigma}σ range.`
+    : itm
+    ? `Green border — Strike is inside this period's ±${sigma}σ range (ITM). There is a ~${SIGMA_PROBABILITY[sigma]} chance price stays within this range.`
+    : `Red border — Strike is outside this period's ±${sigma}σ range (OTM). The expected move does not reach the strike within this timeframe.`;
 
   return (
     <div
       className={cn(
         "rounded-lg border-2 p-4 space-y-3",
-        itm
-          ? "border-emerald-400 dark:border-emerald-600"
-          : "border-rose-400 dark:border-rose-600",
+        borderColor,
         highlight && "bg-violet-50 dark:bg-violet-950/30"
       )}
     >
@@ -230,21 +296,24 @@ function RangeCard({
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">{days}d</span>
-          <Tooltip
-            content={
-              itm
-                ? `Green border — Strike is inside this period's ±${sigma}σ range (ITM). There is a ~${SIGMA_PROBABILITY[sigma]} chance price stays within this range.`
-                : `Red border — Strike is outside this period's ±${sigma}σ range (OTM). The expected move does not reach the strike within this timeframe.`
-            }
-          >
+          <Tooltip content={tooltipText}>
             <Info
-              className={cn("w-3.5 h-3.5 cursor-help", itm ? "text-emerald-500" : "text-rose-500")}
+              className={cn(
+                "w-3.5 h-3.5 cursor-help",
+                hasPremium
+                  ? callInRange && putInRange
+                    ? "text-emerald-500"
+                    : callInRange || putInRange
+                    ? "text-amber-400"
+                    : "text-rose-500"
+                  : itm ? "text-emerald-500" : "text-rose-500"
+              )}
             />
           </Tooltip>
         </div>
       </div>
 
-      <MiniLine lower={lower} upper={upper} index={indexPrice} strike={strikePrice} />
+      <MiniLine lower={lower} upper={upper} index={indexPrice} strike={strikePrice} callBreakeven={callBreakeven} putBreakeven={putBreakeven} />
 
       <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs mt-5">
         <Stat
@@ -273,11 +342,15 @@ function MiniLine({
   upper,
   index,
   strike,
+  callBreakeven,
+  putBreakeven,
 }: {
   lower: number;
   upper: number;
   index: number;
   strike: number;
+  callBreakeven?: number;
+  putBreakeven?: number;
 }) {
   const padding = (upper - lower) * 0.3;
   const min = lower - padding;
@@ -313,6 +386,42 @@ function MiniLine({
             }}
           />
         )}
+        {/* call breakeven marker — amber triangle pointing up */}
+        {(() => {
+          if (callBreakeven == null) return null;
+          const beP = toP(callBreakeven);
+          if (beP < 0 || beP > 100) return null;
+          return (
+            <div
+              className="absolute top-1/2 w-0 h-0 z-10"
+              style={{
+                left: `${beP}%`,
+                transform: "translateX(-50%) translateY(-50%)",
+                borderLeft: "5px solid transparent",
+                borderRight: "5px solid transparent",
+                borderBottom: "9px solid #f59e0b",
+              }}
+            />
+          );
+        })()}
+        {/* put breakeven marker — violet triangle pointing down */}
+        {(() => {
+          if (putBreakeven == null) return null;
+          const beP = toP(putBreakeven);
+          if (beP < 0 || beP > 100) return null;
+          return (
+            <div
+              className="absolute top-1/2 w-0 h-0 z-10"
+              style={{
+                left: `${beP}%`,
+                transform: "translateX(-50%) translateY(-50%)",
+                borderLeft: "5px solid transparent",
+                borderRight: "5px solid transparent",
+                borderTop: "9px solid #8b5cf6",
+              }}
+            />
+          );
+        })()}
         {/* index dot */}
         <div
           className="absolute top-1/2 w-2.5 h-2.5 rounded-full bg-blue-500 border border-white shadow-sm z-20"
@@ -335,6 +444,37 @@ function MiniLine({
           {fmt(upper)}
         </span>
       </div>
+      {/* breakeven labels */}
+      {(callBreakeven != null || putBreakeven != null) && (
+        <div className="relative h-3">
+          {(() => {
+            if (callBreakeven == null) return null;
+            const beP = toP(callBreakeven);
+            if (beP < 0 || beP > 100) return null;
+            return (
+              <span
+                className="absolute text-[10px] text-amber-500 font-medium"
+                style={{ left: `${beP}%`, transform: "translateX(-50%)" }}
+              >
+                C {fmt(callBreakeven)}
+              </span>
+            );
+          })()}
+          {(() => {
+            if (putBreakeven == null) return null;
+            const beP = toP(putBreakeven);
+            if (beP < 0 || beP > 100) return null;
+            return (
+              <span
+                className="absolute text-[10px] text-violet-500 font-medium"
+                style={{ left: `${beP}%`, transform: "translateX(-50%)" }}
+              >
+                P {fmt(putBreakeven)}
+              </span>
+            );
+          })()}
+        </div>
+      )}
     </div>
   );
 }

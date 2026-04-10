@@ -23,6 +23,9 @@ interface Props {
   thetaRaw: string;
   onThetaChange: (v: string) => void;
   thetaValid: boolean;
+  premiumRaw: string;
+  onPremiumChange: (v: string) => void;
+  premiumValid: boolean;
 }
 
 export function ParametersSidebar({
@@ -43,6 +46,9 @@ export function ParametersSidebar({
   thetaRaw,
   onThetaChange,
   thetaValid,
+  premiumRaw,
+  onPremiumChange,
+  premiumValid,
 }: Props) {
   return (
     <Card>
@@ -236,6 +242,19 @@ export function ParametersSidebar({
           />
           {!thetaValid && <p className="text-[11px] text-rose-500">Enter a negative number</p>}
         </div>
+
+        <Field label="Premium (per share)" error={!premiumValid ? "Enter a positive number" : undefined}>
+          <Input
+            id="premium"
+            type="number"
+            min="0.01"
+            step="0.01"
+            placeholder="e.g. 3.50"
+            value={premiumRaw}
+            onChange={(e) => onPremiumChange(e.target.value)}
+            className={`h-8 text-xs${!premiumValid ? " border-rose-400 focus-visible:ring-rose-400" : ""}`}
+          />
+        </Field>
       </CardContent>
     </Card>
   );
