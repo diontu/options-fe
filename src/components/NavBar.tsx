@@ -1,9 +1,10 @@
-import { NavLink } from "react-router-dom";
-import { TrendingUp, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Compass, Target, TrendingUp } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 const PAGES = [
   { to: "/", label: "Visualizer", icon: TrendingUp, end: true },
+  { to: "/direction", label: "Direction", icon: Compass, end: false },
   { to: "/entry", label: "When to Buy", icon: Target, end: false },
 ];
 
