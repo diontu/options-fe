@@ -1,15 +1,16 @@
-import { useState } from "react";
-import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { X } from "lucide-react";
+import { useState } from "react";
 
 interface Props {
   tickers: string[];
   onAdd: (ticker: string) => void;
   onRemove: (ticker: string) => void;
+  onSelect: (ticker: string) => void;
 }
 
-export function Watchlist({ tickers, onAdd, onRemove }: Props) {
+export function Watchlist({ tickers, onAdd, onRemove, onSelect }: Props) {
   const [input, setInput] = useState("");
 
   function submit() {
@@ -34,7 +35,14 @@ export function Watchlist({ tickers, onAdd, onRemove }: Props) {
             "px-2.5 py-1 text-xs font-semibold tracking-wide"
           )}
         >
-          {ticker}
+          <button
+            type="button"
+            onClick={() => onSelect(ticker)}
+            className="hover:text-primary transition-colors"
+            aria-label={`Select ${ticker}`}
+          >
+            {ticker}
+          </button>
           <button
             type="button"
             onClick={() => onRemove(ticker)}

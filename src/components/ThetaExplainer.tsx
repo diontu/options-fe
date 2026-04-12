@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
 interface Props {
-  theta: number;       // daily decay per share, typically negative e.g. -0.05
+  theta: number; // daily decay per share, typically negative e.g. -0.05
   optionPrice?: number; // optional: to show decay as % of premium
 }
 
@@ -11,8 +11,7 @@ export function ThetaExplainer({ theta, optionPrice }: Props) {
   const weeklyDecay = dailyDecay * 5;
   const monthlyDecay = dailyDecay * 21;
 
-  const pctOfPremium =
-    optionPrice && optionPrice > 0 ? (dailyDecay / optionPrice) * 100 : null;
+  const pctOfPremium = optionPrice && optionPrice > 0 ? (dailyDecay / optionPrice) * 100 : null;
 
   // Theta intensity label
   const intensity = (() => {
@@ -36,8 +35,9 @@ export function ThetaExplainer({ theta, optionPrice }: Props) {
             <span className={intensity.color}>{intensity.label}</span> daily time decay
           </p>
           <p className="text-xs text-muted-foreground">
-            This option loses ~${dailyDecay.toFixed(3)} per share per day (${(dailyDecay * 100).toFixed(2)} per
-            contract) purely from the passage of time, assuming all else stays the same.
+            This option loses ~${dailyDecay.toFixed(3)} per share per day ($
+            {(dailyDecay * 100).toFixed(2)} per contract) purely from the passage of time, assuming
+            all else stays the same.
             {pctOfPremium !== null && (
               <> That's ~{pctOfPremium.toFixed(1)}% of the current premium each day.</>
             )}
@@ -49,9 +49,24 @@ export function ThetaExplainer({ theta, optionPrice }: Props) {
       <div className="space-y-3">
         <h3 className="text-sm font-semibold">Projected time decay</h3>
         <div className="grid grid-cols-3 gap-3">
-          <DecayCard period="1 Day" perShare={dailyDecay} perContract={dailyDecay * 100} color="amber" />
-          <DecayCard period="1 Week" perShare={weeklyDecay} perContract={weeklyDecay * 100} color="orange" />
-          <DecayCard period="1 Month" perShare={monthlyDecay} perContract={monthlyDecay * 100} color="rose" />
+          <DecayCard
+            period="1 Day"
+            perShare={dailyDecay}
+            perContract={dailyDecay * 100}
+            color="amber"
+          />
+          <DecayCard
+            period="1 Week"
+            perShare={weeklyDecay}
+            perContract={weeklyDecay * 100}
+            color="orange"
+          />
+          <DecayCard
+            period="1 Month"
+            perShare={monthlyDecay}
+            perContract={monthlyDecay * 100}
+            color="rose"
+          />
         </div>
         <p className="text-[11px] text-muted-foreground">
           Assumes theta stays constant — in reality theta accelerates as expiration approaches.
@@ -118,7 +133,7 @@ export function ThetaExplainer({ theta, optionPrice }: Props) {
       {/* Buyer vs Seller */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Perspective
-          role="Buyer"
+          label="Buyer"
           icon={<TrendingUp className="w-4 h-4" />}
           color="blue"
           points={[
@@ -137,7 +152,7 @@ export function ThetaExplainer({ theta, optionPrice }: Props) {
           ]}
         />
         <Perspective
-          role="Seller"
+          label="Seller"
           icon={<TrendingDown className="w-4 h-4" />}
           color="violet"
           points={[
@@ -172,15 +187,20 @@ function DecayCard({
   color: "amber" | "orange" | "rose";
 }) {
   const colorMap = {
-    amber: "border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300",
-    orange: "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300",
+    amber:
+      "border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300",
+    orange:
+      "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300",
     rose: "border-rose-200 bg-rose-50 dark:border-rose-800 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300",
   };
 
   return (
     <div className={cn("rounded-lg border p-3 space-y-1", colorMap[color])}>
       <p className="text-xs font-semibold">{period}</p>
-      <p className="text-sm font-bold">${perShare.toFixed(3)}<span className="text-xs font-normal"> /share</span></p>
+      <p className="text-sm font-bold">
+        ${perShare.toFixed(3)}
+        <span className="text-xs font-normal"> /share</span>
+      </p>
       <p className="text-xs opacity-80">${perContract.toFixed(2)} /contract</p>
     </div>
   );
@@ -196,12 +216,12 @@ function InfoTile({ title, body }: { title: string; body: string }) {
 }
 
 function Perspective({
-  role,
+  label,
   icon,
   color,
   points,
 }: {
-  role: string;
+  label: string;
   icon: React.ReactNode;
   color: "blue" | "violet";
   points: { heading: string; body: string }[];
@@ -226,7 +246,7 @@ function Perspective({
     <div className={cn("rounded-lg border p-4 space-y-3", c.header)}>
       <div className={cn("flex items-center gap-2 font-semibold text-sm", c.title)}>
         <span className={c.icon}>{icon}</span>
-        {role}
+        {label}
       </div>
       <ul className="space-y-2.5">
         {points.map((p) => (

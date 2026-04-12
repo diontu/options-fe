@@ -1,6 +1,6 @@
+import { cn } from "@/lib/utils";
 import * as React from "react";
 import { createPortal } from "react-dom";
-import { cn } from "@/lib/utils";
 
 interface TooltipProps {
   content: React.ReactNode;
@@ -18,7 +18,13 @@ interface Pos {
   placement: "top" | "bottom";
 }
 
-export function Tooltip({ content, children, className, width = "w-64", side = "top" }: TooltipProps) {
+export function Tooltip({
+  content,
+  children,
+  className,
+  width = "w-64",
+  side = "top",
+}: TooltipProps) {
   const triggerRef = React.useRef<HTMLDivElement>(null);
   const popoverRef = React.useRef<HTMLDivElement>(null);
   const [visible, setVisible] = React.useState(false);
@@ -33,15 +39,10 @@ export function Tooltip({ content, children, className, width = "w-64", side = "
     const ph = popover?.offsetHeight ?? 0;
     const pw = popover?.offsetWidth ?? 0;
 
-    const left = Math.min(
-      Math.max(tr.left + tr.width / 2 - pw / 2, 8),
-      window.innerWidth - pw - 8
-    );
+    const left = Math.min(Math.max(tr.left + tr.width / 2 - pw / 2, 8), window.innerWidth - pw - 8);
 
     const top =
-      placement === "top"
-        ? tr.top + window.scrollY - ph - 8
-        : tr.bottom + window.scrollY + 8;
+      placement === "top" ? tr.top + window.scrollY - ph - 8 : tr.bottom + window.scrollY + 8;
 
     setPos({ top, left, placement });
   }

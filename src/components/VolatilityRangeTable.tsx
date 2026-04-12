@@ -1,11 +1,11 @@
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/useDebounce";
+import { cn } from "@/lib/utils";
 import { Info } from "lucide-react";
+import { useState } from "react";
 
 interface Props {
   indexPrice: number;
@@ -45,7 +45,13 @@ const PRESETS = [
   { label: "1 Year", days: 252 },
 ];
 
-export function VolatilityRangeTable({ indexPrice, strikePrice, impliedVolatility, premium, delta }: Props) {
+export function VolatilityRangeTable({
+  indexPrice,
+  strikePrice,
+  impliedVolatility,
+  premium,
+  delta,
+}: Props) {
   const [showCustom, setShowCustom] = useState(false);
   const [customDaysRaw, setCustomDaysRaw] = useState("30");
   const [sigma, setSigma] = useState(1);
@@ -79,8 +85,8 @@ export function VolatilityRangeTable({ indexPrice, strikePrice, impliedVolatilit
         <Tooltip
           content={
             <span>
-              Scales the range by the number of standard deviations. Under a normal distribution:
-              1σ covers ~68% of outcomes, 2σ covers ~95%, and 3σ covers ~99.7%.
+              Scales the range by the number of standard deviations. Under a normal distribution: 1σ
+              covers ~68% of outcomes, 2σ covers ~95%, and 3σ covers ~99.7%.
             </span>
           }
         >
@@ -98,21 +104,41 @@ export function VolatilityRangeTable({ indexPrice, strikePrice, impliedVolatilit
           <span>Index price</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-2.5 h-2.5 bg-emerald-500 border border-white shadow-sm shrink-0" style={{ transform: "rotate(45deg)" }} />
+          <div
+            className="w-2.5 h-2.5 bg-emerald-500 border border-white shadow-sm shrink-0"
+            style={{ transform: "rotate(45deg)" }}
+          />
           <span>Strike (ITM)</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-2.5 h-2.5 bg-rose-500 border border-white shadow-sm shrink-0" style={{ transform: "rotate(45deg)" }} />
+          <div
+            className="w-2.5 h-2.5 bg-rose-500 border border-white shadow-sm shrink-0"
+            style={{ transform: "rotate(45deg)" }}
+          />
           <span>Strike (OTM)</span>
         </div>
         {premium != null && (
           <>
             <div className="flex items-center gap-1.5">
-              <div className="w-0 h-0 shrink-0" style={{ borderLeft: "5px solid transparent", borderRight: "5px solid transparent", borderBottom: "9px solid #f59e0b" }} />
+              <div
+                className="w-0 h-0 shrink-0"
+                style={{
+                  borderLeft: "5px solid transparent",
+                  borderRight: "5px solid transparent",
+                  borderBottom: "9px solid #f59e0b",
+                }}
+              />
               <span>Call breakeven</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-0 h-0 shrink-0" style={{ borderLeft: "5px solid transparent", borderRight: "5px solid transparent", borderTop: "9px solid #8b5cf6" }} />
+              <div
+                className="w-0 h-0 shrink-0"
+                style={{
+                  borderLeft: "5px solid transparent",
+                  borderRight: "5px solid transparent",
+                  borderTop: "9px solid #8b5cf6",
+                }}
+              />
               <span>Put breakeven</span>
             </div>
           </>
@@ -167,9 +193,7 @@ export function VolatilityRangeTable({ indexPrice, strikePrice, impliedVolatilit
                   onChange={(e) => setCustomDaysRaw(e.target.value)}
                   className={!customValid ? "border-rose-400 focus-visible:ring-rose-400" : ""}
                 />
-                {!customValid && (
-                  <p className="text-xs text-rose-500">Enter 1–3650 trading days</p>
-                )}
+                {!customValid && <p className="text-xs text-rose-500">Enter 1–3650 trading days</p>}
               </div>
               {customValid && (
                 <p className="text-xs text-muted-foreground pt-5">
@@ -209,10 +233,10 @@ export function VolatilityRangeTable({ indexPrice, strikePrice, impliedVolatilit
         <Tooltip
           content={
             <span>
-              Implied volatility is annualized. To scale it to a shorter period, multiply by
-              √(days / 252). This gives the expected ±1σ move — roughly a 68% probability the price
-              stays within this range. Increasing σ widens the range and raises the probability.
-              252 is used because that is the number of trading days in a year.
+              Implied volatility is annualized. To scale it to a shorter period, multiply by √(days
+              / 252). This gives the expected ±1σ move — roughly a 68% probability the price stays
+              within this range. Increasing σ widens the range and raises the probability. 252 is
+              used because that is the number of trading days in a year.
             </span>
           }
         >
@@ -262,21 +286,21 @@ function RangeCard({
     ? callInRange && putInRange
       ? "border-emerald-400 dark:border-emerald-600"
       : callInRange || putInRange
-      ? "border-amber-400 dark:border-amber-500"
-      : "border-rose-400 dark:border-rose-600"
+        ? "border-amber-400 dark:border-amber-500"
+        : "border-rose-400 dark:border-rose-600"
     : itm
-    ? "border-emerald-400 dark:border-emerald-600"
-    : "border-rose-400 dark:border-rose-600";
+      ? "border-emerald-400 dark:border-emerald-600"
+      : "border-rose-400 dark:border-rose-600";
 
   const tooltipText = hasPremium
     ? callInRange && putInRange
       ? `Green — Both call and put breakevens are within the ±${sigma}σ range.`
       : callInRange || putInRange
-      ? `Yellow — Only one breakeven (${callInRange ? "call" : "put"}) is within the ±${sigma}σ range.`
-      : `Red — Neither breakeven is within the ±${sigma}σ range.`
+        ? `Yellow — Only one breakeven (${callInRange ? "call" : "put"}) is within the ±${sigma}σ range.`
+        : `Red — Neither breakeven is within the ±${sigma}σ range.`
     : itm
-    ? `Green border — Strike is inside this period's ±${sigma}σ range (ITM). There is a ~${SIGMA_PROBABILITY[sigma]} chance price stays within this range.`
-    : `Red border — Strike is outside this period's ±${sigma}σ range (OTM). The expected move does not reach the strike within this timeframe.`;
+      ? `Green border — Strike is inside this period's ±${sigma}σ range (ITM). There is a ~${SIGMA_PROBABILITY[sigma]} chance price stays within this range.`
+      : `Red border — Strike is outside this period's ±${sigma}σ range (OTM). The expected move does not reach the strike within this timeframe.`;
 
   return (
     <div
@@ -303,16 +327,25 @@ function RangeCard({
                   ? callInRange && putInRange
                     ? "text-emerald-500"
                     : callInRange || putInRange
-                    ? "text-amber-400"
+                      ? "text-amber-400"
+                      : "text-rose-500"
+                  : itm
+                    ? "text-emerald-500"
                     : "text-rose-500"
-                  : itm ? "text-emerald-500" : "text-rose-500"
               )}
             />
           </Tooltip>
         </div>
       </div>
 
-      <MiniLine lower={lower} upper={upper} index={indexPrice} strike={strikePrice} callBreakeven={callBreakeven} putBreakeven={putBreakeven} />
+      <MiniLine
+        lower={lower}
+        upper={upper}
+        index={indexPrice}
+        strike={strikePrice}
+        callBreakeven={callBreakeven}
+        putBreakeven={putBreakeven}
+      />
 
       <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs mt-5">
         <Stat
@@ -361,8 +394,7 @@ function MiniLine({
   const strikeP = toP(strike);
   const strikeVisible = strikeP >= 0 && strikeP <= 100;
 
-  const fmt = (v: number) =>
-    v >= 1000 ? `$${(v / 1000).toFixed(1)}k` : `$${v.toFixed(0)}`;
+  const fmt = (v: number) => (v >= 1000 ? `$${(v / 1000).toFixed(1)}k` : `$${v.toFixed(0)}`);
 
   return (
     <div className="space-y-1">

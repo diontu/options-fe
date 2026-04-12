@@ -1,9 +1,5 @@
 import { cn } from "@/lib/utils";
-import {
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-} from "lucide-react";
+import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 
 type Signal = "green" | "yellow" | "red";
 
@@ -40,22 +36,22 @@ function CheckCard({ signal, label, description, green, yellow, red }: CheckItem
     signal === "green"
       ? "border-emerald-200 dark:border-emerald-800"
       : signal === "yellow"
-      ? "border-amber-200 dark:border-amber-700"
-      : "border-rose-200 dark:border-rose-800";
+        ? "border-amber-200 dark:border-amber-700"
+        : "border-rose-200 dark:border-rose-800";
 
   const bgColor =
     signal === "green"
       ? "bg-emerald-50 dark:bg-emerald-950/30"
       : signal === "yellow"
-      ? "bg-amber-50 dark:bg-amber-950/30"
-      : "bg-rose-50 dark:bg-rose-950/30";
+        ? "bg-amber-50 dark:bg-amber-950/30"
+        : "bg-rose-50 dark:bg-rose-950/30";
 
   const labelColor =
     signal === "green"
       ? "text-emerald-700 dark:text-emerald-300"
       : signal === "yellow"
-      ? "text-amber-700 dark:text-amber-300"
-      : "text-rose-700 dark:text-rose-300";
+        ? "text-amber-700 dark:text-amber-300"
+        : "text-rose-700 dark:text-rose-300";
 
   return (
     <div className={cn("rounded-lg border p-4 space-y-3", borderColor, bgColor)}>
@@ -67,15 +63,24 @@ function CheckCard({ signal, label, description, green, yellow, red }: CheckItem
       <div className="space-y-1.5 pt-1 border-t border-current/10">
         <div className="flex gap-2 text-xs">
           <SignalDot signal="green" />
-          <span><span className="font-semibold text-emerald-700 dark:text-emerald-400">Go: </span>{green}</span>
+          <span>
+            <span className="font-semibold text-emerald-700 dark:text-emerald-400">Go: </span>
+            {green}
+          </span>
         </div>
         <div className="flex gap-2 text-xs">
           <SignalDot signal="yellow" />
-          <span><span className="font-semibold text-amber-700 dark:text-amber-400">Caution: </span>{yellow}</span>
+          <span>
+            <span className="font-semibold text-amber-700 dark:text-amber-400">Caution: </span>
+            {yellow}
+          </span>
         </div>
         <div className="flex gap-2 text-xs">
           <SignalDot signal="red" />
-          <span><span className="font-semibold text-rose-700 dark:text-rose-400">No-go: </span>{red}</span>
+          <span>
+            <span className="font-semibold text-rose-700 dark:text-rose-400">No-go: </span>
+            {red}
+          </span>
         </div>
       </div>
     </div>
@@ -87,7 +92,8 @@ const CHECKS: Omit<CheckItemProps, "signal">[] = [
     label: "1. Trend — Up or Down?",
     description:
       "Options trade in the direction of the prevailing trend far more often than against it. Before anything else, know whether the stock is in a clear uptrend, downtrend, or choppy range. Buying calls into a downtrend or puts into a rally is fighting the tape.",
-    green: "Clear trend on the daily/weekly — higher highs and higher lows (calls) or lower highs and lower lows (puts).",
+    green:
+      "Clear trend on the daily/weekly — higher highs and higher lows (calls) or lower highs and lower lows (puts).",
     yellow: "Trend is flattening or showing early reversal signals. Reduce size, shorten duration.",
     red: "Price is in a range-bound chop or moving hard against your directional bias.",
   },
@@ -95,32 +101,40 @@ const CHECKS: Omit<CheckItemProps, "signal">[] = [
     label: "2. Support / Resistance — Where Are You Buying?",
     description:
       "Entering near a key level dramatically changes your risk/reward. Buying calls right at support gives a nearby, well-defined stop. Buying calls at the top of a range or just under resistance means the trade needs to fight through supply immediately.",
-    green: "Buying calls just above a confirmed support level (or puts just below resistance). Risk is tight and defined.",
-    yellow: "Mid-range with no nearby reference point. You can enter but widen your mental stop accordingly.",
+    green:
+      "Buying calls just above a confirmed support level (or puts just below resistance). Risk is tight and defined.",
+    yellow:
+      "Mid-range with no nearby reference point. You can enter but widen your mental stop accordingly.",
     red: "Buying at the extreme of a move — at resistance for calls, at support for puts — where the market is already stretched.",
   },
   {
     label: "3. Momentum — Is It Overextended?",
     description:
       "Momentum indicators like RSI tell you whether price has run too far too fast. Chasing an overextended move is one of the most common ways to get caught in a reversal right after entry. Oversold doesn't mean buy and overbought doesn't mean sell — but combined with trend and levels it matters a lot.",
-    green: "RSI is in a constructive range (40–60 for trend continuation, or bouncing from oversold/overbought for mean-reversion setups).",
-    yellow: "RSI approaching extended territory (>70 for calls, <30 for puts) but trend is strong. Reduce size or wait for a pullback.",
+    green:
+      "RSI is in a constructive range (40–60 for trend continuation, or bouncing from oversold/overbought for mean-reversion setups).",
+    yellow:
+      "RSI approaching extended territory (>70 for calls, <30 for puts) but trend is strong. Reduce size or wait for a pullback.",
     red: "RSI is deeply extended (>80 or <20) and you're thinking of buying more in that direction — high chance of getting caught in a snap-back.",
   },
   {
     label: "4. Volume — Is Anyone Else Showing Up?",
     description:
       "Volume confirms conviction. A breakout on low volume is suspect — it may not hold. Unusual options activity (UOA) in the chain can signal that informed money is positioning ahead of a move. High put/call volume asymmetry can also hint at where smart money is leaning.",
-    green: "Price move accompanied by above-average volume; unusual call/put buying in the options chain aligns with your thesis.",
-    yellow: "Volume is average or mixed. The setup is valid but lacks strong confirmation — use a smaller initial position.",
+    green:
+      "Price move accompanied by above-average volume; unusual call/put buying in the options chain aligns with your thesis.",
+    yellow:
+      "Volume is average or mixed. The setup is valid but lacks strong confirmation — use a smaller initial position.",
     red: "Breakout or trend move on thin volume. Price may revert quickly once volume returns.",
   },
   {
     label: "5. Catalyst — Why Would It Move?",
     description:
       "Options are time-limited instruments. Without a reason for the underlying to move within your contract's timeframe, theta erodes your premium even if you're directionally right eventually. A catalyst defines the 'why' and helps you choose an expiration that aligns with the expected event.",
-    green: "Clear upcoming catalyst: earnings, FDA date, product launch, macro event, or a technical breakout in progress. Your expiration is comfortably past the event.",
-    yellow: "Technical thesis only — no known catalyst. Valid, but choose longer expiration and size down to give the trade time to develop.",
+    green:
+      "Clear upcoming catalyst: earnings, FDA date, product launch, macro event, or a technical breakout in progress. Your expiration is comfortably past the event.",
+    yellow:
+      "Technical thesis only — no known catalyst. Valid, but choose longer expiration and size down to give the trade time to develop.",
     red: "No clear catalyst, short DTE, and the stock has been drifting. Pure premium bleed waiting to happen.",
   },
 ];
@@ -135,10 +149,10 @@ export function EntryFramework() {
       <div className="rounded-lg border bg-muted/40 p-4 space-y-2">
         <p className="text-sm font-semibold">Run this checklist before every entry</p>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          No single factor guarantees a winning trade. The framework below forces you to pressure-test
-          your thesis across five independent dimensions before committing capital. Each check is
-          rated green / yellow / red — the goal is not to find a perfect setup, but to avoid entries
-          where multiple checks are flashing red.
+          No single factor guarantees a winning trade. The framework below forces you to
+          pressure-test your thesis across five independent dimensions before committing capital.
+          Each check is rated green / yellow / red — the goal is not to find a perfect setup, but to
+          avoid entries where multiple checks are flashing red.
         </p>
       </div>
 
@@ -215,8 +229,9 @@ export function EntryFramework() {
             </p>
 
             <p>
-              Satisficing reframes the goal. Instead of asking <em>"is this the best possible
-              entry?"</em>, ask <em>"does this setup meet my minimum criteria for a trade?"</em>
+              Satisficing reframes the goal. Instead of asking{" "}
+              <em>"is this the best possible entry?"</em>, ask{" "}
+              <em>"does this setup meet my minimum criteria for a trade?"</em>
               If four of five checks are green and the one yellow isn't a dealbreaker (say, volume
               is average but the trend, level, momentum, and catalyst all align), that is a
               satisfactory setup. Take it.
@@ -230,8 +245,8 @@ export function EntryFramework() {
                 <li className="flex gap-2">
                   <span className="shrink-0 font-bold">·</span>
                   <span>
-                    <strong>Theta doesn't wait.</strong> Every day you delay, your premium erodes.
-                    A satisfactory entry today at fair premium beats a "perfect" entry next week at
+                    <strong>Theta doesn't wait.</strong> Every day you delay, your premium erodes. A
+                    satisfactory entry today at fair premium beats a "perfect" entry next week at
                     higher cost with less time remaining.
                   </span>
                 </li>

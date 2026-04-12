@@ -1,6 +1,6 @@
-import { Target } from "lucide-react";
-import { NavBar } from "@/components/NavBar";
 import { EntryFramework } from "@/components/EntryFramework";
+import { NavBar } from "@/components/NavBar";
+import { Target } from "lucide-react";
 
 export default function EntryFrameworkPage() {
   return (

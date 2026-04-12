@@ -11,8 +11,7 @@ function deltaLabel(d: number): { moneyness: string; color: string; description:
     return { moneyness: "Deep ITM", color: "text-emerald-600", description: "deep in-the-money" };
   if (abs >= 0.5)
     return { moneyness: "ITM", color: "text-emerald-500", description: "in-the-money" };
-  if (abs >= 0.45)
-    return { moneyness: "ATM", color: "text-blue-500", description: "at-the-money" };
+  if (abs >= 0.45) return { moneyness: "ATM", color: "text-blue-500", description: "at-the-money" };
   if (abs >= 0.3)
     return { moneyness: "OTM", color: "text-amber-500", description: "out-of-the-money" };
   return {
@@ -39,9 +38,8 @@ export function DeltaExplainer({ delta }: Props) {
         </div>
         <div className="space-y-1">
           <p className="text-sm font-semibold">
-            This is a{" "}
-            <span className={color}>{moneyness}</span>{" "}
-            {isCall ? "call" : "put"} — the strike is {description}
+            This is a <span className={color}>{moneyness}</span> {isCall ? "call" : "put"} — the
+            strike is {description}
           </p>
           <p className="text-xs text-muted-foreground">
             ~{pctItm}% probability of expiring in-the-money · option moves ~${dollarMove} per $1
@@ -99,7 +97,7 @@ export function DeltaExplainer({ delta }: Props) {
       {/* Buyer vs Seller */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Perspective
-          role="Buyer"
+          label="Buyer"
           icon={<TrendingUp className="w-4 h-4" />}
           color="blue"
           delta={delta}
@@ -121,7 +119,7 @@ export function DeltaExplainer({ delta }: Props) {
           ]}
         />
         <Perspective
-          role="Seller"
+          label="Seller"
           icon={<TrendingDown className="w-4 h-4" />}
           color="violet"
           delta={delta}
@@ -138,7 +136,7 @@ export function DeltaExplainer({ delta }: Props) {
             },
             {
               heading: "Delta hedging",
-              body: `Market makers and sophisticated sellers delta-hedge by trading the underlying to stay directionally neutral. This is more actively managed as delta approaches 0.50.`,
+              body: "Market makers and sophisticated sellers delta-hedge by trading the underlying to stay directionally neutral. This is more actively managed as delta approaches 0.50.",
             },
           ]}
         />
@@ -157,12 +155,12 @@ function InfoTile({ title, body }: { title: string; body: string }) {
 }
 
 function Perspective({
-  role,
+  label,
   icon,
   color,
   points,
 }: {
-  role: string;
+  label: string;
   icon: React.ReactNode;
   color: "blue" | "violet";
   delta: number;
@@ -189,7 +187,7 @@ function Perspective({
     <div className={cn("rounded-lg border p-4 space-y-3", c.header)}>
       <div className={cn("flex items-center gap-2 font-semibold text-sm", c.title)}>
         <span className={c.icon}>{icon}</span>
-        {role}
+        {label}
       </div>
       <ul className="space-y-2.5">
         {points.map((p) => (

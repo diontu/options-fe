@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-const SECTIONS = [
+const DEFAULT_SECTIONS = [
   { id: "range-section", label: "Range by Time Period" },
   { id: "delta-section", label: "Delta" },
   { id: "iv-section", label: "Implied Volatility" },
@@ -11,14 +11,18 @@ function scrollTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 }
 
-export function TableOfContents() {
+export function TableOfContents({
+  sections = DEFAULT_SECTIONS,
+}: {
+  sections?: { id: string; label: string }[];
+}) {
   return (
     <nav className="rounded-lg border bg-card px-2 py-1.5">
       <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground px-1 mb-1">
         On this page
       </p>
       <ul>
-        {SECTIONS.map(({ id, label }) => (
+        {sections.map(({ id, label }) => (
           <li key={id}>
             <button
               type="button"

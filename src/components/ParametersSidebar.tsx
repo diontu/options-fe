@@ -1,9 +1,9 @@
-import type React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
+import type React from "react";
 
 interface Props {
   symbol: string;
@@ -95,9 +95,27 @@ export function ParametersSidebar({
           />
         </Field>
 
+        <Field
+          label="Premium (per share)"
+          error={!premiumValid ? "Enter a positive number" : undefined}
+        >
+          <Input
+            id="premium"
+            type="number"
+            min="0.01"
+            step="0.01"
+            placeholder="e.g. 3.50"
+            value={premiumRaw}
+            onChange={(e) => onPremiumChange(e.target.value)}
+            className={`h-8 text-xs${!premiumValid ? " border-rose-400 focus-visible:ring-rose-400" : ""}`}
+          />
+        </Field>
+
         <div className="space-y-1">
           <div className="flex items-center gap-1.5">
-            <Label htmlFor="iv" className="text-xs">Implied Volatility (%)</Label>
+            <Label htmlFor="iv" className="text-xs">
+              Implied Volatility (%)
+            </Label>
             <Tooltip
               side="top"
               width="w-[450px]"
@@ -124,18 +142,17 @@ export function ParametersSidebar({
                       IV gives a rough sense of how likely the underlying is to land within a given
                       price range by expiration. A wider IV means a wider expected range — and a
                       higher chance the strike ends up in-the-money. See the{" "}
-                      <a
-                        href="#range-section"
+                      <button
+                        type="button"
                         className="text-primary underline underline-offset-2"
-                        onClick={(e) => {
-                          e.preventDefault();
+                        onClick={() => {
                           document
                             .getElementById("range-section")
                             ?.scrollIntoView({ behavior: "smooth" });
                         }}
                       >
                         Range by Time Period
-                      </a>{" "}
+                      </button>{" "}
                       section for the exact probabilities at 1σ, 2σ, and 3σ.
                     </p>
                   </div>
@@ -147,18 +164,17 @@ export function ParametersSidebar({
                       IV Rank compares today's IV against its 52-week history — an IVR near 100
                       means IV is historically elevated, making selling premium more attractive. See
                       the{" "}
-                      <a
-                        href="#iv-section"
+                      <button
+                        type="button"
                         className="text-primary underline underline-offset-2"
-                        onClick={(e) => {
-                          e.preventDefault();
+                        onClick={() => {
                           document
                             .getElementById("iv-section")
                             ?.scrollIntoView({ behavior: "smooth" });
                         }}
                       >
                         Understanding Implied Volatility
-                      </a>{" "}
+                      </button>{" "}
                       section for more.
                     </p>
                   </div>
@@ -184,15 +200,17 @@ export function ParametersSidebar({
 
         <div className="space-y-1">
           <div className="flex items-center gap-1.5">
-            <Label htmlFor="delta" className="text-xs">Delta</Label>
+            <Label htmlFor="delta" className="text-xs">
+              Delta
+            </Label>
             <Tooltip
               side="top"
               width="w-64"
               content={
                 <p className="text-muted-foreground leading-relaxed">
-                  Delta (0 to 1 for calls, −1 to 0 for puts) is commonly used as a rough estimate
-                  of the probability the option expires in-the-money. A delta of 0.30 implies
-                  roughly a 30% chance of expiring ITM.
+                  Delta (0 to 1 for calls, −1 to 0 for puts) is commonly used as a rough estimate of
+                  the probability the option expires in-the-money. A delta of 0.30 implies roughly a
+                  30% chance of expiring ITM.
                 </p>
               }
             >
@@ -215,7 +233,9 @@ export function ParametersSidebar({
 
         <div className="space-y-1">
           <div className="flex items-center gap-1.5">
-            <Label htmlFor="theta" className="text-xs">Theta (daily)</Label>
+            <Label htmlFor="theta" className="text-xs">
+              Theta (daily)
+            </Label>
             <Tooltip
               side="top"
               width="w-64"
@@ -242,19 +262,6 @@ export function ParametersSidebar({
           />
           {!thetaValid && <p className="text-[11px] text-rose-500">Enter a negative number</p>}
         </div>
-
-        <Field label="Premium (per share)" error={!premiumValid ? "Enter a positive number" : undefined}>
-          <Input
-            id="premium"
-            type="number"
-            min="0.01"
-            step="0.01"
-            placeholder="e.g. 3.50"
-            value={premiumRaw}
-            onChange={(e) => onPremiumChange(e.target.value)}
-            className={`h-8 text-xs${!premiumValid ? " border-rose-400 focus-visible:ring-rose-400" : ""}`}
-          />
-        </Field>
       </CardContent>
     </Card>
   );

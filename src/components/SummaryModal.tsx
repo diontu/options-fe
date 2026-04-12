@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import { X, TrendingUp, Clock, Activity, BarChart2, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Activity, BarChart2, Clock, ExternalLink, TrendingUp, X } from "lucide-react";
+import { useEffect } from "react";
 
 interface Props {
   open: boolean;
@@ -95,26 +95,31 @@ export function SummaryModal({
       <div
         className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
+        onKeyDown={(e) => e.key === "Escape" && onClose()}
         aria-hidden="true"
       />
 
       {/* Panel */}
+      {/* biome-ignore lint/a11y/useSemanticElements: custom modal pattern with backdrop needs div */}
       <div
         role="dialog"
         aria-modal="true"
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
         onClick={onClose}
+        onKeyDown={(e) => e.key === "Escape" && onClose()}
       >
         <div
           className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border bg-background shadow-2xl"
           onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-5 py-4">
             <div>
               <p className="text-base font-semibold">Position Summary</p>
               <p className="text-xs text-muted-foreground">
-                {ticker} · Index ${fmt(indexPrice)} · Strike ${fmt(strikePrice)} · IV {iv.toFixed(1)}%
+                {ticker} · Index ${fmt(indexPrice)} · Strike ${fmt(strikePrice)} · IV{" "}
+                {iv.toFixed(1)}%
               </p>
             </div>
             <button
@@ -170,17 +175,34 @@ export function SummaryModal({
                   <p className="text-xs text-muted-foreground pt-1">
                     At {iv.toFixed(1)}% IV, the market prices a ±{oneMonthMovePct}% move over the
                     next month. The strike at ${fmt(strikePrice)} is{" "}
-                    <span className={strikeInMonth ? "text-emerald-600 font-medium" : "text-rose-500 font-medium"}>
+                    <span
+                      className={
+                        strikeInMonth ? "text-emerald-600 font-medium" : "text-rose-500 font-medium"
+                      }
+                    >
                       {strikeInMonth ? "inside" : "outside"} the 1-month 1σ range
                     </span>
                     {premium != null && (
                       <>
-                        {" "}— call breakeven ${fmt(callBE!)} is{" "}
-                        <span className={inRange(callBE, month1) ? "text-emerald-600 font-medium" : "text-rose-500 font-medium"}>
+                        {" "}
+                        — call breakeven ${fmt(callBE ?? 0)} is{" "}
+                        <span
+                          className={
+                            inRange(callBE, month1)
+                              ? "text-emerald-600 font-medium"
+                              : "text-rose-500 font-medium"
+                          }
+                        >
                           {inRange(callBE, month1) ? "inside" : "outside"}
                         </span>
-                        , put breakeven ${fmt(putBE!)} is{" "}
-                        <span className={inRange(putBE, month1) ? "text-emerald-600 font-medium" : "text-rose-500 font-medium"}>
+                        , put breakeven ${fmt(putBE ?? 0)} is{" "}
+                        <span
+                          className={
+                            inRange(putBE, month1)
+                              ? "text-emerald-600 font-medium"
+                              : "text-rose-500 font-medium"
+                          }
+                        >
                           {inRange(putBE, month1) ? "inside" : "outside"}
                         </span>
                       </>
@@ -193,17 +215,16 @@ export function SummaryModal({
 
             {/* Delta section */}
             {deltaValid && (
-              <Section
-                icon={<TrendingUp className="w-4 h-4" />}
-                title="Delta"
-              >
+              <Section icon={<TrendingUp className="w-4 h-4" />} title="Delta">
                 <div className="space-y-2 text-xs">
                   <span className="font-mono font-semibold">{delta.toFixed(2)}</span>
                   <p className="text-muted-foreground leading-relaxed">
                     ~<span className="text-foreground font-medium">{itmPct}% probability</span> of
                     expiring in-the-money. For every $1 move in {ticker}, this option gains or loses
                     approximately{" "}
-                    <span className="text-foreground font-medium">${absDelta.toFixed(2)} per share</span>{" "}
+                    <span className="text-foreground font-medium">
+                      ${absDelta.toFixed(2)} per share
+                    </span>{" "}
                     (${(absDelta * 100).toFixed(0)} per contract).
                   </p>
                   {allValid && (
@@ -238,10 +259,10 @@ export function SummaryModal({
                   </div>
                   <p className="text-muted-foreground leading-relaxed">
                     {iv < 25
-                      ? `IV is relatively low — options premium is cheaper than average. Buyers get better value per dollar of premium paid, but the market is not pricing in large moves.`
+                      ? "IV is relatively low — options premium is cheaper than average. Buyers get better value per dollar of premium paid, but the market is not pricing in large moves."
                       : iv < 40
-                      ? `IV is elevated — you are paying above-average premium. Be cautious of IV crush after a catalyst resolves; the option can lose value even if price moves in your favor.`
-                      : `IV is high — premium is expensive. Buyers are paying a significant risk premium; a sharp drop in IV after the event (IV crush) can wipe out gains even on a correct directional bet.`}
+                        ? "IV is elevated — you are paying above-average premium. Be cautious of IV crush after a catalyst resolves; the option can lose value even if price moves in your favor."
+                        : "IV is high — premium is expensive. Buyers are paying a significant risk premium; a sharp drop in IV after the event (IV crush) can wipe out gains even on a correct directional bet."}
                   </p>
                   <p className="text-muted-foreground">
                     Always compare this to the stock's 52-week IV Rank to judge whether{" "}
@@ -335,11 +356,11 @@ function RangeRow({
     ? callBEInRange && putBEInRange
       ? "border-emerald-300 dark:border-emerald-700"
       : callBEInRange || putBEInRange
-      ? "border-amber-300 dark:border-amber-600"
-      : "border-rose-300 dark:border-rose-700"
+        ? "border-amber-300 dark:border-amber-600"
+        : "border-rose-300 dark:border-rose-700"
     : strikeInRange
-    ? "border-emerald-300 dark:border-emerald-700"
-    : "border-rose-300 dark:border-rose-700";
+      ? "border-emerald-300 dark:border-emerald-700"
+      : "border-rose-300 dark:border-rose-700";
 
   return (
     <div className={cn("rounded-lg border px-3 py-2 space-y-1.5", borderColor)}>
@@ -355,10 +376,14 @@ function RangeRow({
       <div className="flex items-center gap-3 text-xs">
         {hasPremium ? (
           <>
-            <span className={cn("font-medium", callBEInRange ? "text-emerald-600" : "text-rose-500")}>
+            <span
+              className={cn("font-medium", callBEInRange ? "text-emerald-600" : "text-rose-500")}
+            >
               ▲ Call BE: {callBEInRange ? "in range" : "out"}
             </span>
-            <span className={cn("font-medium", putBEInRange ? "text-emerald-600" : "text-rose-500")}>
+            <span
+              className={cn("font-medium", putBEInRange ? "text-emerald-600" : "text-rose-500")}
+            >
               ▼ Put BE: {putBEInRange ? "in range" : "out"}
             </span>
           </>

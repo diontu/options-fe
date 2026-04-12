@@ -1,16 +1,16 @@
-import { useState, useCallback } from "react";
-import { useDebounce } from "@/hooks/useDebounce";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ParametersSidebar } from "@/components/ParametersSidebar";
-import { VolatilityRangeTable } from "@/components/VolatilityRangeTable";
-import { IVExplainer } from "@/components/IVExplainer";
 import { DeltaExplainer } from "@/components/DeltaExplainer";
-import { ThetaExplainer } from "@/components/ThetaExplainer";
-import { TableOfContents } from "@/components/TableOfContents";
-import { Watchlist } from "@/components/Watchlist";
+import { IVExplainer } from "@/components/IVExplainer";
 import { NavBar } from "@/components/NavBar";
+import { ParametersSidebar } from "@/components/ParametersSidebar";
 import { SummaryModal } from "@/components/SummaryModal";
-import { TrendingUp, ClipboardList } from "lucide-react";
+import { TableOfContents } from "@/components/TableOfContents";
+import { ThetaExplainer } from "@/components/ThetaExplainer";
+import { VolatilityRangeTable } from "@/components/VolatilityRangeTable";
+import { Watchlist } from "@/components/Watchlist";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDebounce } from "@/hooks/useDebounce";
+import { ClipboardList, TrendingUp } from "lucide-react";
+import { useCallback, useState } from "react";
 
 const DEFAULTS = {
   symbol: "AAPL",
@@ -39,12 +39,12 @@ export default function App() {
     setWatchlist(next);
     localStorage.setItem("watchlist", JSON.stringify(next));
   }
-  const [symbol, setSymbol] = useState(DEFAULTS.symbol);
-  const [strikeRaw, setStrikeRaw] = useState(String(DEFAULTS.strikePrice));
-  const [indexRaw, setIndexRaw] = useState(String(DEFAULTS.indexPrice));
-  const [ivRaw, setIvRaw] = useState(String(DEFAULTS.impliedVolatility));
-  const [deltaRaw, setDeltaRaw] = useState(String(DEFAULTS.delta));
-  const [thetaRaw, setThetaRaw] = useState(String(DEFAULTS.theta));
+  const [symbol, setSymbol] = useState("");
+  const [strikeRaw, setStrikeRaw] = useState("");
+  const [indexRaw, setIndexRaw] = useState("");
+  const [ivRaw, setIvRaw] = useState("");
+  const [deltaRaw, setDeltaRaw] = useState("");
+  const [thetaRaw, setThetaRaw] = useState("");
   const [premiumRaw, setPremiumRaw] = useState("");
 
   const debouncedStrike = useDebounce(strikeRaw);
@@ -67,7 +67,7 @@ export default function App() {
   const strikeValid = parsePositiveNumber(debouncedStrike) !== null;
   const indexValid = parsePositiveNumber(debouncedIndex) !== null;
   const ivValid =
-    parsePositiveNumber(debouncedIv) !== null && parsePositiveNumber(debouncedIv)! <= 500;
+    parsePositiveNumber(debouncedIv) !== null && (parsePositiveNumber(debouncedIv) ?? 0) <= 500;
   const deltaValid = parseDelta(debouncedDelta) !== null;
 
   const parseTheta = (val: string): number | null => {
@@ -97,6 +97,7 @@ export default function App() {
             tickers={watchlist}
             onAdd={(t) => updateWatchlist([...watchlist, t])}
             onRemove={(t) => updateWatchlist(watchlist.filter((x) => x !== t))}
+            onSelect={(t) => setSymbol(t)}
           />
         </div>
 

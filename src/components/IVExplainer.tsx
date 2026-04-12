@@ -1,5 +1,5 @@
-import { ExternalLink, TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ExternalLink, TrendingDown, TrendingUp } from "lucide-react";
 
 interface Props {
   impliedVolatility: number;
@@ -7,10 +7,29 @@ interface Props {
 }
 
 function ivLevel(iv: number): { label: string; color: string; description: string } {
-  if (iv < 15) return { label: "Low", color: "text-emerald-600", description: "below-average uncertainty priced into the market" };
-  if (iv < 25) return { label: "Moderate", color: "text-blue-600", description: "average uncertainty priced into the market" };
-  if (iv < 40) return { label: "Elevated", color: "text-amber-600", description: "above-average uncertainty priced into the market" };
-  return { label: "High", color: "text-rose-600", description: "significant uncertainty priced into the market" };
+  if (iv < 15)
+    return {
+      label: "Low",
+      color: "text-emerald-600",
+      description: "below-average uncertainty priced into the market",
+    };
+  if (iv < 25)
+    return {
+      label: "Moderate",
+      color: "text-blue-600",
+      description: "average uncertainty priced into the market",
+    };
+  if (iv < 40)
+    return {
+      label: "Elevated",
+      color: "text-amber-600",
+      description: "above-average uncertainty priced into the market",
+    };
+  return {
+    label: "High",
+    color: "text-rose-600",
+    description: "significant uncertainty priced into the market",
+  };
 }
 
 export function IVExplainer({ impliedVolatility, symbol }: Props) {
@@ -23,7 +42,9 @@ export function IVExplainer({ impliedVolatility, symbol }: Props) {
       {/* IV summary */}
       <div className="flex items-start gap-3 rounded-lg border bg-muted/40 p-4">
         <div className="mt-0.5 shrink-0">
-          <span className={cn("text-2xl font-bold", level.color)}>{impliedVolatility.toFixed(1)}%</span>
+          <span className={cn("text-2xl font-bold", level.color)}>
+            {impliedVolatility.toFixed(1)}%
+          </span>
         </div>
         <div className="space-y-0.5">
           <p className="text-sm font-semibold">
@@ -52,10 +73,10 @@ export function IVExplainer({ impliedVolatility, symbol }: Props) {
           Why IV Rank matters more than IV alone
         </p>
         <p className="text-xs text-amber-900/80 dark:text-amber-200/80 leading-relaxed">
-          A raw IV of {impliedVolatility.toFixed(1)}% tells you the market's current expectation
-          of volatility — but it says nothing about whether that number is cheap or expensive
-          relative to this stock's own history. <strong>IV Rank (IVR)</strong> solves this by
-          expressing today's IV as a percentile of its 52-week range:
+          A raw IV of {impliedVolatility.toFixed(1)}% tells you the market's current expectation of
+          volatility — but it says nothing about whether that number is cheap or expensive relative
+          to this stock's own history. <strong>IV Rank (IVR)</strong> solves this by expressing
+          today's IV as a percentile of its 52-week range:
         </p>
         <ul className="text-xs text-amber-900/80 dark:text-amber-200/80 space-y-1 pl-3">
           <li>
@@ -69,9 +90,8 @@ export function IVExplainer({ impliedVolatility, symbol }: Props) {
           </li>
         </ul>
         <p className="text-xs text-amber-900/80 dark:text-amber-200/80 leading-relaxed">
-          Two stocks can both have 30% IV but vastly different IVRs — one may be historically
-          cheap, the other historically expensive. Always check IVR before deciding to buy or sell
-          premium.
+          Two stocks can both have 30% IV but vastly different IVRs — one may be historically cheap,
+          the other historically expensive. Always check IVR before deciding to buy or sell premium.
         </p>
         {symbol.trim() && (
           <a
@@ -89,7 +109,7 @@ export function IVExplainer({ impliedVolatility, symbol }: Props) {
       {/* Buyer / Seller columns */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Perspective
-          role="Buyer"
+          label="Buyer"
           icon={<TrendingUp className="w-4 h-4" />}
           color="blue"
           points={[
@@ -113,7 +133,7 @@ export function IVExplainer({ impliedVolatility, symbol }: Props) {
         />
 
         <Perspective
-          role="Seller"
+          label="Seller"
           icon={<TrendingDown className="w-4 h-4" />}
           color="violet"
           points={[
@@ -141,12 +161,12 @@ export function IVExplainer({ impliedVolatility, symbol }: Props) {
 }
 
 function Perspective({
-  role,
+  label,
   icon,
   color,
   points,
 }: {
-  role: string;
+  label: string;
   icon: React.ReactNode;
   color: "blue" | "violet";
   points: { heading: string; body: string }[];
@@ -172,7 +192,7 @@ function Perspective({
     <div className={cn("rounded-lg border p-4 space-y-3", c.header)}>
       <div className={cn("flex items-center gap-2 font-semibold text-sm", c.title)}>
         <span className={c.icon}>{icon}</span>
-        {role}
+        {label}
       </div>
       <ul className="space-y-2.5">
         {points.map((p) => (
