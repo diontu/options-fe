@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import {
+  Calendar,
   CandlestickChart,
   Clock,
   Compass,
@@ -28,6 +29,7 @@ const RESOURCE_PAGES = [
 const MORE_PAGES = [
   { to: "/candles", label: "Candles & Wicks", icon: CandlestickChart },
   { to: "/patterns", label: "Chart Patterns", icon: GitBranch },
+  { to: "/event-week", label: "Event Week Playbook", icon: Calendar },
 ];
 
 const ALL_PAGES = [

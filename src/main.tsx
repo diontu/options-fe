@@ -7,6 +7,7 @@ import { ScrollToTop } from "./components/ScrollToTop.tsx";
 import CandlesPage from "./pages/CandlesPage.tsx";
 import DirectionPage from "./pages/DirectionPage.tsx";
 import EntryFrameworkPage from "./pages/EntryFrameworkPage.tsx";
+import EventWeekPage from "./pages/EventWeekPage.tsx";
 import MarketHoursPage from "./pages/MarketHoursPage.tsx";
 import MarketPricingPage from "./pages/MarketPricingPage.tsx";
 import PatternsPage from "./pages/PatternsPage.tsx";
@@ -26,6 +27,7 @@ createRoot(rootEl).render(
         <Route path="/hours" element={<MarketHoursPage />} />
         <Route path="/candles" element={<CandlesPage />} />
         <Route path="/patterns" element={<PatternsPage />} />
+        <Route path="/event-week" element={<EventWeekPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
