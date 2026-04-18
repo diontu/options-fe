@@ -1,5 +1,8 @@
 import { cn } from "@/lib/utils";
 import {
+  AlertTriangle,
+  BarChart2,
+  Building2,
   Calendar,
   CandlestickChart,
   Clock,
@@ -30,6 +33,9 @@ const MORE_PAGES = [
   { to: "/candles", label: "Candles & Wicks", icon: CandlestickChart },
   { to: "/patterns", label: "Chart Patterns", icon: GitBranch },
   { to: "/event-week", label: "Event Week Playbook", icon: Calendar },
+  { to: "/volume", label: "Volume & the Week", icon: BarChart2 },
+  { to: "/institutions", label: "Institutions", icon: Building2 },
+  { to: "/risk", label: "How People Lose Money", icon: AlertTriangle },
 ];
 
 const ALL_PAGES = [
