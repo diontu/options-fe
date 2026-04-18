@@ -10,6 +10,7 @@ interface CheckItemProps {
   green: string;
   yellow: string;
   red: string;
+  tip?: string;
 }
 
 function SignalDot({ signal }: { signal: Signal }) {
@@ -31,7 +32,7 @@ function SignalIcon({ signal }: { signal: Signal }) {
   return <XCircle className="w-4 h-4 text-rose-500 shrink-0" />;
 }
 
-function CheckCard({ signal, label, description, green, yellow, red }: CheckItemProps) {
+function CheckCard({ signal, label, description, green, yellow, red, tip }: CheckItemProps) {
   const borderColor =
     signal === "green"
       ? "border-emerald-200 dark:border-emerald-800"
@@ -83,76 +84,83 @@ function CheckCard({ signal, label, description, green, yellow, red }: CheckItem
           </span>
         </div>
       </div>
+      {tip && (
+        <div className="pt-1 border-t border-current/10">
+          <p className="text-[11px] text-muted-foreground/80 italic leading-relaxed">{tip}</p>
+        </div>
+      )}
     </div>
   );
 }
 
 const CHECKS: Omit<CheckItemProps, "signal">[] = [
   {
-    label: "1. Trend — Up or Down?",
+    label: "1. Direction — Is the trend unambiguous?",
     description:
-      "Options trade in the direction of the prevailing trend far more often than against it. Before anything else, know whether the stock is in a clear uptrend, downtrend, or choppy range. Buying calls into a downtrend or puts into a rally is fighting the tape.",
+      "Everything else is secondary to trend. Price above its rising 20 EMA and 50 SMA on the daily = tailwind for calls. Price below falling MAs = tailwind for puts. Market structure tells you the same thing: look for higher highs and higher lows (uptrend) or lower highs and lower lows (downtrend). If the structure is choppy or you can't tell, skip the trade.",
     green:
-      "Clear trend on the daily/weekly — higher highs and higher lows (calls) or lower highs and lower lows (puts).",
-    yellow: "Trend is flattening or showing early reversal signals. Reduce size, shorten duration.",
-    red: "Price is in a range-bound chop or moving hard against your directional bias.",
+      "Daily trend is clear — MAs are sloping and aligned, and price is making the right kind of highs/lows. You're trading with the dominant direction.",
+    yellow:
+      "Trend is recovering from a recent break, or weekly and daily are mixed. Reduce size and choose a longer expiry to give the trade room.",
+    red: "Price is in a choppy range, recently broke market structure, or you're trying to call a reversal without confirmation. This is where most money is lost.",
+    tip: "Institutions trade with trend. If the structure is broken, they've already exited — you'll be buying the bag.",
   },
   {
-    label: "2. Support / Resistance — Where Are You Buying?",
+    label: "2. Setup — Are you entering at a defined level with a pattern?",
     description:
-      "Entering near a key level dramatically changes your risk/reward. Buying calls right at support gives a nearby, well-defined stop. Buying calls at the top of a range or just under resistance means the trade needs to fight through supply immediately.",
+      "A good entry is at a meaningful level (support, resistance, MA) with a recognizable continuation or reversal pattern forming, confirmed by the entry candle. Buying calls in the middle of a range with no nearby reference is guessing, not trading. Look for flags, triangles, or bounces off a key level. The entry candle matters: a strong engulfing or pin bar at support is a signal; a doji or small inside bar mid-range is noise.",
     green:
-      "Buying calls just above a confirmed support level (or puts just below resistance). Risk is tight and defined.",
+      "Clear pattern at a key level (bull flag at support, ascending triangle breakout, bounce off 50 SMA) with a strong confirming candle — engulfing, hammer, or clean close above resistance.",
     yellow:
-      "Mid-range with no nearby reference point. You can enter but widen your mental stop accordingly.",
-    red: "Buying at the extreme of a move — at resistance for calls, at support for puts — where the market is already stretched.",
+      "Valid level but no clear pattern yet, or pattern is forming but the entry candle is weak. Wait for confirmation or take a starter position.",
+    red: "Chasing a move that's already extended, buying at resistance for calls, or entering on a doji after a big run with no pullback.",
+    tip: "The wick tells you who lost control. A long lower wick at support = buyers defended it. A long upper wick at resistance = sellers rejected it. Read the candle before clicking buy.",
   },
   {
-    label: "3. Momentum — Is It Overextended?",
+    label: "3. Timing — Does the catalyst and IV make sense?",
     description:
-      "Momentum indicators like RSI tell you whether price has run too far too fast. Chasing an overextended move is one of the most common ways to get caught in a reversal right after entry. Oversold doesn't mean buy and overbought doesn't mean sell — but combined with trend and levels it matters a lot.",
+      "Options are time-limited. You need a reason the stock moves within your contract window, and you need to understand what's already priced in. Markets price the future, not the present — if earnings beat is widely expected, the beat itself may not move the stock. IV spikes before events and crushes after: buying high-IV calls into earnings to 'play the move' often loses even when you're directionally right. Know your event, know your IV, and choose your expiry deliberately.",
     green:
-      "RSI is in a constructive range (40–60 for trend continuation, or bouncing from oversold/overbought for mean-reversion setups).",
+      "Known catalyst within your expiry window, IV is at or below normal levels, and you're entering in a quality time window (10 AM–3 PM, not the first 15–30 min). Expiry is comfortably past the event.",
     yellow:
-      "RSI approaching extended territory (>70 for calls, <30 for puts) but trend is strong. Reduce size or wait for a pullback.",
-    red: "RSI is deeply extended (>80 or <20) and you're thinking of buying more in that direction — high chance of getting caught in a snap-back.",
+      "Technical thesis only with no hard catalyst, or IV is slightly elevated. Valid entry, but choose longer DTE and size down. Avoid entering pre-event without a clear IV crush strategy.",
+    red: "Short DTE with no catalyst and a drifting stock. Or buying high-IV options right before an event expecting to profit from the move — IV crush will erase most of the gain even if you're right.",
+    tip: "Monday and Friday are lower-conviction days for volume. Tuesday through Thursday — especially late morning and early afternoon — is when institutional flow is cleanest.",
   },
   {
-    label: "4. Volume — Is Anyone Else Showing Up?",
+    label: "4. Confirmation — Is volume and smart money agreeing?",
     description:
-      "Volume confirms conviction. A breakout on low volume is suspect — it may not hold. Unusual options activity (UOA) in the chain can signal that informed money is positioning ahead of a move. High put/call volume asymmetry can also hint at where smart money is leaning.",
+      "Volume is the proof of conviction. A breakout on low RVOL (relative volume) is a warning sign — it may not hold. RVOL above 1.5× on a breakout day is a strong signal. In the options chain, look for unusual activity: large blocks, call sweeps on the ask, or a lopsided put/call ratio that aligns with your thesis. Institutions leave footprints — you don't need to find them, just recognize when they're already there.",
     green:
-      "Price move accompanied by above-average volume; unusual call/put buying in the options chain aligns with your thesis.",
+      "RVOL > 1.5 on the breakout candle. Options chain shows unusual call (or put) buying that aligns with your direction. Block trades or sweeps at your strike zone.",
     yellow:
-      "Volume is average or mixed. The setup is valid but lacks strong confirmation — use a smaller initial position.",
-    red: "Breakout or trend move on thin volume. Price may revert quickly once volume returns.",
-  },
-  {
-    label: "5. Catalyst — Why Would It Move?",
-    description:
-      "Options are time-limited instruments. Without a reason for the underlying to move within your contract's timeframe, theta erodes your premium even if you're directionally right eventually. A catalyst defines the 'why' and helps you choose an expiration that aligns with the expected event.",
-    green:
-      "Clear upcoming catalyst: earnings, FDA date, product launch, macro event, or a technical breakout in progress. Your expiration is comfortably past the event.",
-    yellow:
-      "Technical thesis only — no known catalyst. Valid, but choose longer expiration and size down to give the trade time to develop.",
-    red: "No clear catalyst, short DTE, and the stock has been drifting. Pure premium bleed waiting to happen.",
+      "RVOL is 0.7–1.5 (normal range). Flow in the chain is neutral. Entry is valid but lacks institutional confirmation — size accordingly.",
+    red: "Breakout or bounce on RVOL < 0.7. Options flow is contradicting your trade direction (e.g., heavy put buying while you're playing calls). Thin volume on a key day.",
+    tip: "You don't need all four signals to be neon green. You need them to not be contradicting each other. One strong green and three neutrals is a tradeable setup.",
   },
 ];
 
-// Hardcoded example signals for illustration
-const EXAMPLE_SIGNALS: Signal[] = ["green", "green", "yellow", "green", "green"];
+const EXAMPLE_SIGNALS: Signal[] = ["green", "green", "yellow", "green"];
+
+const VETO_RULES = [
+  "Trend is broken on the daily and you're trying to call a reversal without confirmation",
+  "IV is in the top quartile of its range and you're buying options — not selling them",
+  "You're entering in the first 15 minutes of the open without a defined ORB (opening range breakout) strategy",
+  "DTE is less than 7 days and there's no imminent catalyst — pure theta bleed",
+  "You have no defined exit: no stop loss, no profit target, no plan for the event",
+];
 
 export function EntryFramework() {
   return (
     <div className="space-y-8">
       {/* Intro */}
       <div className="rounded-lg border bg-muted/40 p-4 space-y-2">
-        <p className="text-sm font-semibold">Run this checklist before every entry</p>
+        <p className="text-sm font-semibold">4 checks. If they pass, take the trade.</p>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          No single factor guarantees a winning trade. The framework below forces you to
-          pressure-test your thesis across five independent dimensions before committing capital.
-          Each check is rated green / yellow / red — the goal is not to find a perfect setup, but to
-          avoid entries where multiple checks are flashing red.
+          Most of your edge comes from four things: trading with the trend, entering at a real level
+          with a real pattern, understanding the catalyst and what's priced in, and having volume
+          confirm. Get these right and you've eliminated 80% of bad trades. Everything else is
+          refinement.
         </p>
       </div>
 
@@ -170,29 +178,52 @@ export function EntryFramework() {
           <div className="flex gap-2 items-start">
             <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
             <span>
-              <span className="font-semibold">4–5 greens</span> — High-conviction setup. Full
-              planned position size is warranted.
+              <span className="font-semibold">3–4 greens</span> — High-conviction. Full planned size
+              is warranted. Take the trade.
             </span>
           </div>
           <div className="flex gap-2 items-start">
             <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
             <span>
-              <span className="font-semibold">2–3 greens, rest yellow</span> — Marginal setup. Half
-              size, longer expiry, or wait for a better entry.
+              <span className="font-semibold">2 greens, rest yellow</span> — Marginal. Half size,
+              longer expiry, or wait for check #2 (setup) to sharpen.
             </span>
           </div>
           <div className="flex gap-2 items-start">
             <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
             <span>
-              <span className="font-semibold">Any red flag</span> — Re-evaluate. One red check on
-              trend or catalyst should usually veto the trade.
+              <span className="font-semibold">Any red</span> — Stop. One red on direction or timing
+              vetoes the trade regardless of other signals.
             </span>
           </div>
         </div>
       </div>
 
-      {/* Satisficing section */}
-      <div className="space-y-4 pt-2">
+      {/* Auto-veto rules */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-2">
+            Auto-Veto Rules
+          </span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+        <div className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 p-4 space-y-2">
+          <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+            These are instant no-gos regardless of how good the rest of the setup looks. Each one
+            has been the primary cause of account blowups.
+          </p>
+          {VETO_RULES.map((rule) => (
+            <div key={rule} className="flex gap-2 text-xs">
+              <XCircle className="w-3.5 h-3.5 text-rose-500 shrink-0 mt-0.5" />
+              <span className="text-muted-foreground">{rule}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Satisficing */}
+      <div className="space-y-3">
         <div className="flex items-center gap-2">
           <div className="h-px flex-1 bg-border" />
           <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-2">
@@ -201,88 +232,23 @@ export function EntryFramework() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 p-5 space-y-4">
-          <div className="flex items-start gap-3">
-            <div className="p-1.5 rounded-md bg-blue-100 dark:bg-blue-900 shrink-0">
-              <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-semibold text-blue-800 dark:text-blue-200">
-                Satisficing — Good Enough Beats Waiting for Perfect
-              </p>
-              <p className="text-xs text-blue-900/70 dark:text-blue-200/70 leading-relaxed">
-                The concept of <strong>satisficing</strong> (a blend of "satisfy" and "suffice"),
-                introduced by Nobel laureate Herbert Simon, describes the decision strategy of
-                choosing the first option that meets a defined threshold — rather than searching
-                indefinitely for the optimal one.
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-3 text-xs text-blue-900/80 dark:text-blue-200/80 leading-relaxed">
+        <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 p-5 space-y-3">
+          <p className="text-sm font-semibold text-blue-800 dark:text-blue-200">
+            Good enough beats waiting for perfect
+          </p>
+          <div className="space-y-2 text-xs text-blue-900/80 dark:text-blue-200/80 leading-relaxed">
             <p>
-              In trading, the instinct is to wait for the <em>perfect</em> setup: all five checks
-              green, ideal entry price, the cleanest chart you've ever seen. But that setup rarely
-              exists, and more often than not, waiting for perfection means either missing the move
-              entirely or overtrading when a marginal setup finally starts to "feel" right just
-              because you've been patient.
+              <strong>Satisficing</strong> — choosing the first option that meets a defined
+              threshold rather than searching for the optimal one — is the right decision model for
+              trading. The perfect setup rarely exists, and waiting for it usually means either
+              missing the move or overtrading a marginal one that finally "feels" right.
             </p>
-
             <p>
-              Satisficing reframes the goal. Instead of asking{" "}
-              <em>"is this the best possible entry?"</em>, ask{" "}
-              <em>"does this setup meet my minimum criteria for a trade?"</em>
-              If four of five checks are green and the one yellow isn't a dealbreaker (say, volume
-              is average but the trend, level, momentum, and catalyst all align), that is a
-              satisfactory setup. Take it.
-            </p>
-
-            <div className="rounded-md border border-blue-200 dark:border-blue-700 bg-blue-100/50 dark:bg-blue-900/30 p-3 space-y-2">
-              <p className="font-semibold text-blue-800 dark:text-blue-300">
-                Why this matters specifically for options:
-              </p>
-              <ul className="space-y-1.5 pl-1">
-                <li className="flex gap-2">
-                  <span className="shrink-0 font-bold">·</span>
-                  <span>
-                    <strong>Theta doesn't wait.</strong> Every day you delay, your premium erodes. A
-                    satisfactory entry today at fair premium beats a "perfect" entry next week at
-                    higher cost with less time remaining.
-                  </span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="shrink-0 font-bold">·</span>
-                  <span>
-                    <strong>Analysis paralysis kills P&L.</strong> Spending hours refining a setup
-                    is itself a cost — opportunity cost. Markets move. A workable setup acted on
-                    outperforms a brilliant one that was never taken.
-                  </span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="shrink-0 font-bold">·</span>
-                  <span>
-                    <strong>Consistency compounds.</strong> Repeatedly executing satisfactory setups
-                    with defined risk is how edge accumulates over time. Erratic, emotionally-timed
-                    entries — often a result of waiting too long — don't.
-                  </span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="shrink-0 font-bold">·</span>
-                  <span>
-                    <strong>It enforces discipline over emotion.</strong> Satisficing gives you a
-                    concrete bar to clear. If the checklist passes, you trade. If it doesn't, you
-                    don't — regardless of how excited you feel about the ticker. That separation of
-                    emotion from execution is the entire game.
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            <p>
-              The goal of the five-check framework above is to operationalize satisficing. Define
-              your threshold (e.g., 4 of 5 checks green or yellow, no red flags on trend or
-              catalyst), run the checklist, and act decisively when it clears. Stop searching for
-              the perfect trade. Find the good enough one — and manage it well.
+              Define your threshold (3 of 4 checks green or yellow, no auto-veto triggered), run the
+              checklist, and act when it clears. Theta doesn't wait. A satisfactory entry today
+              beats a perfect one next week with less time remaining and higher premium. Consistency
+              in executing defined setups is where edge accumulates — not in finding the perfect
+              trade.
             </p>
           </div>
         </div>

@@ -685,12 +685,13 @@ export function PatternsGuide() {
             Every chart pattern is built from the same raw material: the push and pull between
             buyers and sellers. Continuation patterns form when one side pauses to rest before
             reasserting control. Reversal patterns form when the other side gradually overwhelms an
-            exhausted trend. The pattern itself isn't the signal — the breakout with volume is.
+            exhausted trend.{" "}
+            <strong>The pattern itself isn't the signal — the breakout with volume is.</strong>
           </p>
           <Callout color="amber" title="The most important rule">
             A pattern is only valid when it breaks out. Prices can develop 90% of a perfect head and
             shoulders and then reverse north. Wait for the break and retest before committing —
-            don't trade the anticipation of a pattern completing.
+            <strong>don't trade the anticipation of a pattern completing.</strong>
           </Callout>
         </div>
       </section>
